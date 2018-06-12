@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">ServiceDemo</string>
+    <string name="startMusic">Start Music</string>
+    <string name="stopMusic">Stop Music</string>
+    <string name="startSticky">Start StickyService</string>
+    <string name="useService">Use Service</string>
+    <string name="useIntent">Use IntentService </string>
+    <string name="useIntentLoop">Use IntentService with Loop</string>
+    <string name="NotificationChannelID">ServiceDemoChannel</string>
+    <string name="NotificationChannelName">"ServiceDemoChannel"</string>
+    <string name="NotificationTextContent">dududududududududududududududududududududududududu</string>
+    <string name="NotificationTitleContent">┬─┬ ノ( ゜-゜ノ) ......... (ノ ゜Д゜)ノ ︵ ┻━┻</string>
+</resources>
