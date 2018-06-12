@@ -264,7 +264,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-
         //Pause MediaPlayer if one was running.
         if (!useService && mediaPlayer != null) {
             mediaPlayer.pause();

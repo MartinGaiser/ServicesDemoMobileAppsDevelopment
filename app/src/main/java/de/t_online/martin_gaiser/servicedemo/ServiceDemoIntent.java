@@ -1,6 +1,7 @@
 package de.t_online.martin_gaiser.servicedemo;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -37,19 +38,26 @@ public class ServiceDemoIntent extends IntentService {
         //Intent Service will can onDestroy since nothing else needs to be done => MediaPlayer will also be stopped.
     }
 
-    private void doAndroidOreoStuff(){
+    private void doAndroidOreoStuff() {
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
+            //Define new Notification (minimum requirement: SmallIcon.)
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getString(R.string.NotificationChannelID));
             notificationBuilder
                     .setContentText(getString(R.string.NotificationTextContent))
                     .setContentTitle(getString(R.string.NotificationTitleContent))
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setAutoCancel(true)
-                    .setContentIntent(PendingIntent.getActivity(this,0,MainActivity.notificationIntent,0));
+                    .setContentIntent(PendingIntent.getActivity(this, 0, MainActivity.notificationIntent, 0));
+            Notification notification = notificationBuilder.build();
 
-            ((NotificationManager) Objects.requireNonNull(getSystemService(Context.NOTIFICATION_SERVICE))).notify(1,notificationBuilder.build());
-            startForeground(1, notificationBuilder.build());
+            //Notify Notification Manager of new Notification.
+            ((NotificationManager) Objects.requireNonNull(getSystemService(Context.NOTIFICATION_SERVICE))).notify(1, notification);
+
+            //Call StartForeground so Android O wont kill the Service.
+            startForeground(1, notification);
         }
     }
 
