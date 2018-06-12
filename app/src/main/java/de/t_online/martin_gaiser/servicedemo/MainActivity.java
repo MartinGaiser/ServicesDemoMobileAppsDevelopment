@@ -18,14 +18,19 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
+    //MediaPlayer that will be started if no service is selected.
     MediaPlayer mediaPlayer;
 
+    //if set to true the app will start a non oreo compatible Service.
     boolean useService = false;
 
+    //if set to true the app will start a oreo compatible Service.
     boolean useOreoService = false;
 
+    //if set to true the app will start a intent service with just MediaPlayer.start in it. (service will stop itself immediately.
     boolean useIntentService = false;
 
+    //if set to true the app will start a intent service with MediaPlayer.start and a loop with Thread.sleep(1000) in it.... so it wont close immediately.
     boolean useIntentServiceLoop = false;
 
     Switch serviceSwitch;
