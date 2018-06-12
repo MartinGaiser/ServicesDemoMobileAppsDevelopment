@@ -16,8 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".ServiceDemo" />
-        <service android:name=".ServiceDemoSticky"/>
+        <service android:name=".ServiceDemo"/>
+        <service android:name=".ServiceDemoOreo"/>
         <service android:name=".ServiceDemoIntent"/>
         <service android:name=".ServiceDemoIntentWithLoop"/>
     </application>

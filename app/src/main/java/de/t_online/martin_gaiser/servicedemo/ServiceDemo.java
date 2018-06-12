@@ -32,7 +32,6 @@ public class ServiceDemo extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        doAndroidOreoStuff();
         //Start new Thread with Workload so the Main activity does not freeze.
         new Thread() {
             public void run() {
@@ -42,30 +41,9 @@ public class ServiceDemo extends Service {
                 //is executed.
             }
         }.start();
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
-    private void doAndroidOreoStuff() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            //Define new Notification (minimum requirement: SmallIcon.)
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getString(R.string.NotificationChannelID));
-            notificationBuilder
-                    .setContentText(getString(R.string.NotificationTextContent))
-                    .setContentTitle(getString(R.string.NotificationTitleContent))
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setAutoCancel(true)
-                    .setContentIntent(PendingIntent.getActivity(this, 0, MainActivity.notificationIntent, 0));
-
-            //Notify Notification Manager of new Notification.
-            Notification notification = notificationBuilder.build();
-            ((NotificationManager) Objects.requireNonNull(getSystemService(Context.NOTIFICATION_SERVICE))).notify(1, notification);
-
-            //Call StartForeground so Android O wont kill the Service.
-            startForeground(1, notification);
-        }
-    }
 
     @Override
     public void onDestroy() {

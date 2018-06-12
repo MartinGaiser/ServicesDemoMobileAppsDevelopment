@@ -35,13 +35,13 @@
         app:layout_constraintVertical_bias="0.74" />
 
     <Switch
-        android:id="@+id/startSticky"
+        android:id="@+id/startOreoService"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:checked="false"
-        android:text="@string/startSticky"
+        android:text="@string/startOreo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

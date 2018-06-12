@@ -22,19 +22,19 @@ public class MainActivity extends AppCompatActivity {
 
     boolean useService = false;
 
-    boolean startSticky = false;
+    boolean useOreoService = false;
 
-    boolean startIntent = false;
+    boolean useIntentService = false;
 
-    boolean startIntentLoop = false;
+    boolean useIntentServiceLoop = false;
 
     Switch serviceSwitch;
 
-    Switch stickySwitch;
+    Switch serviceWithOreoSwitch;
 
-    Switch intentSwitch;
+    Switch intentServiceSwitch;
 
-    Switch intentLoopSwitch;
+    Switch intentServiceLoopSwitch;
 
     Button startButton;
 
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private void settings() {
         serviceSetting();
 
-        stickySetting();
+        serviceOreoSetting();
 
         intentSetting();
 
@@ -83,29 +83,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 useService = b;
-                if (!b) {
-                    stickySwitch.setChecked(false);
-                    intentSwitch.setChecked(false);
-                    intentLoopSwitch.setChecked(false);
-                    stickySwitch.setEnabled(false);
-                    intentSwitch.setEnabled(false);
-                } else {
-                    stickySwitch.setEnabled(true);
-                    intentSwitch.setEnabled(true);
-                }
+                intentServiceSwitch.setEnabled(!b);
+                serviceWithOreoSwitch.setEnabled(!b);
+                intentServiceLoopSwitch.setEnabled(!b);
             }
         });
     }
 
-    private void stickySetting() {
+    private void serviceOreoSetting() {
         //Switch to enable StickyService
-        stickySwitch = findViewById(R.id.startSticky);
-        stickySwitch.setEnabled(false);
-        stickySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        serviceWithOreoSwitch = findViewById(R.id.startOreoService);
+        serviceWithOreoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                startSticky = b;
-                intentSwitch.setEnabled(!b);
+                useOreoService = b;
+                serviceSwitch.setEnabled(!b);
+                intentServiceSwitch.setEnabled(!b);
+                intentServiceLoopSwitch.setEnabled(!b);
 
             }
         });
@@ -113,26 +107,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void intentSetting() {
         //Switch to enable IntentService.
-        intentSwitch = findViewById(R.id.useIntent);
-        intentSwitch.setEnabled(false);
-        intentSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        intentServiceSwitch = findViewById(R.id.useIntent);
+        intentServiceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                startIntent = b;
-                stickySwitch.setEnabled(!b);
-                intentLoopSwitch.setEnabled(b);
+                useIntentService = b;
+                serviceSwitch.setEnabled(!b);
+                serviceWithOreoSwitch.setEnabled(!b);
+                intentServiceLoopSwitch.setEnabled(!b);
             }
         });
     }
 
     private void intentLoopSetting() {
         //Switch to enable IntentService with Loop so the MediaPlayer won't be discarded immediately.
-        intentLoopSwitch = findViewById(R.id.useIntentLoop);
-        intentLoopSwitch.setEnabled(false);
-        intentLoopSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        intentServiceLoopSwitch = findViewById(R.id.useIntentLoop);
+        intentServiceLoopSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                startIntentLoop = b;
+                useIntentServiceLoop = b;
+                serviceSwitch.setEnabled(!b);
+                serviceWithOreoSwitch.setEnabled(!b);
+                intentServiceSwitch.setEnabled(!b);
             }
         });
     }
@@ -147,46 +143,48 @@ public class MainActivity extends AppCompatActivity {
                 String toastText;
                 //Disable Switches until the Stop button was Pressed.
                 serviceSwitch.setEnabled(false);
-                intentSwitch.setEnabled(false);
-                stickySwitch.setEnabled(false);
-                intentLoopSwitch.setEnabled(false);
+                intentServiceSwitch.setEnabled(false);
+                serviceWithOreoSwitch.setEnabled(false);
+                intentServiceLoopSwitch.setEnabled(false);
 
                 //Determine what Service to use... or no Service at all.
-                if (!useService) {
 
                     //Create new MediaPlayer and start it.
-                    if (mediaPlayer == null) {
-                        mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.music);
-                        mediaPlayer.setLooping(true);
-                        mediaPlayer.setVolume(0.5f, 0.5f);
-                    }
-                    mediaPlayer.start();
-                    toastText = "Player started without Service!";
-                } else {
+
 
                     //Create new Intent depending on which switches are checked.
-                    Intent intent;
-                    if (startIntentLoop) {
+                    Intent intent = null;
+                    if (useIntentServiceLoop) {
                         intent = new Intent(MainActivity.this, ServiceDemoIntentWithLoop.class);
                         toastText = "Player started with intent Service with Loop!";
-                    } else if (startSticky) {
-                        intent = new Intent(MainActivity.this, ServiceDemoSticky.class);
+                    } else if (useOreoService) {
+                        intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
                         toastText = "Player started with sticky Service!";
-                    } else if (startIntent) {
+                    } else if (useIntentService) {
                         intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
                         toastText = "Player started with intent Service!";
-                    } else {
+                    } else if(useService){
                         intent = new Intent(MainActivity.this, ServiceDemo.class);
                         toastText = "Player started with normal Service!";
+                    }else {
+                        if (mediaPlayer == null) {
+                            mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.music);
+                            mediaPlayer.setLooping(true);
+                            mediaPlayer.setVolume(0.5f, 0.5f);
+                        }
+                        mediaPlayer.start();
+                        toastText = "Player started without Service!";
                     }
 
                     //Start as ForegroundService if Android O or greater.
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startForegroundService(intent);
-                    } else {
-                        startService(intent);
+                    if(intent != null) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(intent);
+                        } else {
+                            startService(intent);
+                        }
                     }
-                }
+
                 //Show Toast depending of the start Method.
                 Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
             }
@@ -202,51 +200,49 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String toastText;
 
-                //Determine what to disable.
-                if (!useService) {
-
-                    //Stop and release the MediaPlayer if one was running.
-                    if (mediaPlayer != null) {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                        mediaPlayer = null;
-                    }
-                    toastText = "MediaPlayer Stopped";
-                } else {
-
-                    //Create new Intent depending on which switches are checked.
-                    Intent intent;
-                    if (startIntentLoop) {
-                        intent = new Intent(MainActivity.this, ServiceDemoIntentWithLoop.class);
+                    //Determine what to disable.
+                    //Create new Intent depending on which switches are checked and send the Stop Signal.
+                    if (useIntentServiceLoop) {
+                        Intent intent = new Intent(MainActivity.this, ServiceDemoIntentWithLoop.class);
                         toastText = "Intent Service with Loop stopped!";
-                    } else if (startSticky) {
-                        intent = new Intent(MainActivity.this, ServiceDemoSticky.class);
+                        stopService(intent);
+                    }else if (useOreoService) {
+                        Intent intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
                         toastText = "Sticky Service Stopped!";
-                    } else if (startIntent) {
-                        intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
+                        stopService(intent);
+                    }else if (useIntentService) {
+                        Intent intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
                         toastText = "Intent Service Stopped!";
-                    } else {
-                        intent = new Intent(MainActivity.this, ServiceDemo.class);
+                        stopService(intent);
+                    }else if(useService){
+                        Intent intent = new Intent(MainActivity.this, ServiceDemo.class);
                         toastText = "Normal Service Stopped!";
-                    }
+                        stopService(intent);
+                    }else{
 
-                    //Send the Service the Stop Signal.
-                    stopService(intent);
+                        //Stop and release the MediaPlayer if one was running.
+                        if (mediaPlayer != null) {
+                            mediaPlayer.stop();
+                            mediaPlayer.release();
+                            mediaPlayer = null;
+                        }
+                        toastText = "MediaPlayer Stopped";
+                    }
+                    Toast.makeText(MainActivity.this,toastText,Toast.LENGTH_SHORT).show();
 
-                    //Re-Enable the Switches.
-                    if (!startSticky && !startIntent) {
-                        stickySwitch.setEnabled(true);
-                        intentSwitch.setEnabled(true);
-                    } else {
-                        stickySwitch.setEnabled(startSticky);
-                        intentSwitch.setEnabled(startIntent);
-                    }
-                    if (intentSwitch.isEnabled()) {
-                        intentLoopSwitch.setEnabled(true);
-                    }
+                //Re-Enable the Switches.
+                if(!useService && !useOreoService && !useIntentService && !useIntentServiceLoop){
+                    serviceSwitch.setEnabled(true);
+                    serviceWithOreoSwitch.setEnabled(true);
+                    intentServiceSwitch.setEnabled(true);
+                    intentServiceLoopSwitch.setEnabled(true);
+                }else {
+                    serviceSwitch.setEnabled(useService);
+                    serviceWithOreoSwitch.setEnabled(useOreoService);
+                    intentServiceSwitch.setEnabled(useIntentService);
+                    intentServiceLoopSwitch.setEnabled(useIntentServiceLoop);
                 }
                 Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
-                serviceSwitch.setEnabled(true);
             }
         });
     }
