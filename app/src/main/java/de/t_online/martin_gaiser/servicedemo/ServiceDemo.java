@@ -1,19 +1,13 @@
 package de.t_online.martin_gaiser.servicedemo;
 
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-
-import java.util.Objects;
+import android.widget.Toast;
 
 public class ServiceDemo extends Service {
     MediaPlayer mediaPlayer;
@@ -22,6 +16,7 @@ public class ServiceDemo extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Toast.makeText(this, this.getClass().getSimpleName() + " started.", Toast.LENGTH_SHORT).show();
 
         //Instantiate MediaPlayer on start.
         mediaPlayer = MediaPlayer.create(this, R.raw.music);
@@ -37,7 +32,7 @@ public class ServiceDemo extends Service {
             public void run() {
                 mediaPlayer.start();
                 //Can stop itself if...
-                //onDestroy();
+                //stopSelf();
                 //is executed.
             }
         }.start();
@@ -53,9 +48,7 @@ public class ServiceDemo extends Service {
         mediaPlayer.release();
         mediaPlayer = null;
 
-        System.out.println("==========================================================");
-        System.out.println("Service " + this.getClass().getName() + "was destroyed!");
-        System.out.println("==========================================================");
+        Toast.makeText(this, this.getClass().getSimpleName() + " stopped.", Toast.LENGTH_SHORT).show();
         super.onDestroy();
     }
 

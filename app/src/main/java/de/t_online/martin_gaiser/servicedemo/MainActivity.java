@@ -145,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String toastText;
                 //Disable Switches until the Stop button was Pressed.
                 serviceSwitch.setEnabled(false);
                 intentServiceSwitch.setEnabled(false);
@@ -161,16 +160,12 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = null;
                     if (useIntentServiceLoop) {
                         intent = new Intent(MainActivity.this, ServiceDemoIntentWithLoop.class);
-                        toastText = "Player started with intent Service with Loop!";
                     } else if (useOreoService) {
                         intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
-                        toastText = "Player started with sticky Service!";
                     } else if (useIntentService) {
                         intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
-                        toastText = "Player started with intent Service!";
                     } else if(useService){
                         intent = new Intent(MainActivity.this, ServiceDemo.class);
-                        toastText = "Player started with normal Service!";
                     }else {
                         if (mediaPlayer == null) {
                             mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.music);
@@ -178,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
                             mediaPlayer.setVolume(0.5f, 0.5f);
                         }
                         mediaPlayer.start();
-                        toastText = "Player started without Service!";
+                        //Show Toast depending of the start Method.
+                        Toast.makeText(MainActivity.this,"MediaPlayer started!", Toast.LENGTH_SHORT).show();
                     }
 
                     //Start as ForegroundService if Android O or greater.
@@ -189,9 +185,6 @@ public class MainActivity extends AppCompatActivity {
                             startService(intent);
                         }
                     }
-
-                //Show Toast depending of the start Method.
-                Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -203,25 +196,20 @@ public class MainActivity extends AppCompatActivity {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String toastText;
 
                     //Determine what to disable.
                     //Create new Intent depending on which switches are checked and send the Stop Signal.
                     if (useIntentServiceLoop) {
                         Intent intent = new Intent(MainActivity.this, ServiceDemoIntentWithLoop.class);
-                        toastText = "Intent Service with Loop stopped!";
                         stopService(intent);
                     }else if (useOreoService) {
                         Intent intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
-                        toastText = "Sticky Service Stopped!";
                         stopService(intent);
                     }else if (useIntentService) {
                         Intent intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
-                        toastText = "Intent Service Stopped!";
                         stopService(intent);
                     }else if(useService){
                         Intent intent = new Intent(MainActivity.this, ServiceDemo.class);
-                        toastText = "Normal Service Stopped!";
                         stopService(intent);
                     }else{
 
@@ -231,9 +219,9 @@ public class MainActivity extends AppCompatActivity {
                             mediaPlayer.release();
                             mediaPlayer = null;
                         }
-                        toastText = "MediaPlayer Stopped";
+                        Toast.makeText(MainActivity.this, "MediaPlayer Stopped",Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(MainActivity.this,toastText,Toast.LENGTH_SHORT).show();
+
 
                 //Re-Enable the Switches.
                 if(!useService && !useOreoService && !useIntentService && !useIntentServiceLoop){
@@ -247,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                     intentServiceSwitch.setEnabled(useIntentService);
                     intentServiceLoopSwitch.setEnabled(useIntentServiceLoop);
                 }
-                Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
             }
         });
     }

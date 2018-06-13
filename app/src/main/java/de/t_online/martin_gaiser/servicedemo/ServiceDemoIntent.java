@@ -10,6 +10,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import java.util.Objects;
 
@@ -25,6 +26,7 @@ public class ServiceDemoIntent extends IntentService {
     public void onCreate() {
         //Instantiate MediaPlayer on start.
         super.onCreate();
+        Toast.makeText(this, this.getClass().getSimpleName() + " started.", Toast.LENGTH_SHORT).show();
         mediaPlayer = MediaPlayer.create(this, R.raw.music);
         mediaPlayer.setLooping(true);
         mediaPlayer.setVolume(0.5f, 0.5f);
@@ -67,9 +69,7 @@ public class ServiceDemoIntent extends IntentService {
         mediaPlayer.stop();
         mediaPlayer.release();
         mediaPlayer = null;
-        System.out.println("==========================================================");
-        System.out.println("Service " + this.getClass().getName() + "was destroyed!");
-        System.out.println("==========================================================");
+        Toast.makeText(this, this.getClass().getSimpleName() + " stopped.", Toast.LENGTH_SHORT).show();
         super.onDestroy();
     }
 }
