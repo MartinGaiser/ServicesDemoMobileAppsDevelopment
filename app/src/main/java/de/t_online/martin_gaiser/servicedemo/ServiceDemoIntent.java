@@ -4,12 +4,16 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Objects;
@@ -35,9 +39,19 @@ public class ServiceDemoIntent extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         doAndroidOreoStuff();
+
         //No need to create a new Thread since a IntentService creates a new WorkerThread.
         mediaPlayer.start();
-        //Intent Service will can onDestroy since nothing else needs to be done => MediaPlayer will also be stopped.
+
+        //Make worker thread Idle so onDestroy won't be called.
+        //When the Service will be stopped from the MainActivity the worker-Thread will also be stopped.
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void doAndroidOreoStuff() {
@@ -65,6 +79,7 @@ public class ServiceDemoIntent extends IntentService {
 
     @Override
     public void onDestroy() {
+
         //Release resources.
         mediaPlayer.stop();
         mediaPlayer.release();

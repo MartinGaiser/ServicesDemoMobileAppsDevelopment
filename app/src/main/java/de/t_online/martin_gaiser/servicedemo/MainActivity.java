@@ -2,9 +2,13 @@ package de.t_online.martin_gaiser.servicedemo;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -28,18 +32,38 @@ public class MainActivity extends AppCompatActivity {
     boolean useOreoService = false;
 
     //if set to true the app will start a intent service with just MediaPlayer.start in it. (service will stop itself immediately.
-    boolean useIntentService = false;
+    boolean useBoundService = false;
 
     //if set to true the app will start a intent service with MediaPlayer.start and a loop with Thread.sleep(1000) in it.... so it wont close immediately.
-    boolean useIntentServiceLoop = false;
+    boolean useIntentService = false;
+
+    //Bound Service Object
+    ServiceDemoBound boundService;
+
+    //Connection to Bound Service
+    public ServiceConnection serviceConnection = new ServiceConnection() {
+
+        //Stuff do to when the Service is connected
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            boundService = ((ServiceDemoBound.ServiceBinder) iBinder).getService();
+            Toast.makeText(MainActivity.this,boundService.callTheService(),Toast.LENGTH_SHORT).show();
+        }
+
+        //Stuff to do when the Service disconnects
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            boundService = null;
+        }
+    };
 
     Switch serviceSwitch;
 
     Switch serviceWithOreoSwitch;
 
-    Switch intentServiceSwitch;
+    Switch boundServiceSwitch;
 
-    Switch intentServiceLoopSwitch;
+    Switch intentServiceSwitch;
 
     Button startButton;
 
@@ -76,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
 
         serviceOreoSetting();
 
-        intentSetting();
+        boundSetting();
 
-        intentLoopSetting();
+        intentSetting();
     }
 
     private void serviceSetting() {
@@ -88,9 +112,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 useService = b;
-                intentServiceSwitch.setEnabled(!b);
+                boundServiceSwitch.setEnabled(!b);
                 serviceWithOreoSwitch.setEnabled(!b);
-                intentServiceLoopSwitch.setEnabled(!b);
+                intentServiceSwitch.setEnabled(!b);
             }
         });
     }
@@ -103,15 +127,29 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 useOreoService = b;
                 serviceSwitch.setEnabled(!b);
+                boundServiceSwitch.setEnabled(!b);
                 intentServiceSwitch.setEnabled(!b);
-                intentServiceLoopSwitch.setEnabled(!b);
 
             }
         });
     }
 
-    private void intentSetting() {
+    private void boundSetting() {
         //Switch to enable IntentService.
+        boundServiceSwitch = findViewById(R.id.useBound);
+        boundServiceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                useBoundService = b;
+                serviceSwitch.setEnabled(!b);
+                serviceWithOreoSwitch.setEnabled(!b);
+                intentServiceSwitch.setEnabled(!b);
+            }
+        });
+    }
+
+    private void intentSetting() {
+        //Switch to enable IntentService with Loop so the MediaPlayer won't be discarded immediately.
         intentServiceSwitch = findViewById(R.id.useIntent);
         intentServiceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -119,21 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 useIntentService = b;
                 serviceSwitch.setEnabled(!b);
                 serviceWithOreoSwitch.setEnabled(!b);
-                intentServiceLoopSwitch.setEnabled(!b);
-            }
-        });
-    }
-
-    private void intentLoopSetting() {
-        //Switch to enable IntentService with Loop so the MediaPlayer won't be discarded immediately.
-        intentServiceLoopSwitch = findViewById(R.id.useIntentLoop);
-        intentServiceLoopSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                useIntentServiceLoop = b;
-                serviceSwitch.setEnabled(!b);
-                serviceWithOreoSwitch.setEnabled(!b);
-                intentServiceSwitch.setEnabled(!b);
+                boundServiceSwitch.setEnabled(!b);
             }
         });
     }
@@ -147,9 +171,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Disable Switches until the Stop button was Pressed.
                 serviceSwitch.setEnabled(false);
-                intentServiceSwitch.setEnabled(false);
+                boundServiceSwitch.setEnabled(false);
                 serviceWithOreoSwitch.setEnabled(false);
-                intentServiceLoopSwitch.setEnabled(false);
+                intentServiceSwitch.setEnabled(false);
 
                 //Determine what Service to use... or no Service at all.
 
@@ -157,15 +181,19 @@ public class MainActivity extends AppCompatActivity {
 
 
                     //Create new Intent depending on which switches are checked.
-                    Intent intent = null;
-                    if (useIntentServiceLoop) {
-                        intent = new Intent(MainActivity.this, ServiceDemoIntentWithLoop.class);
+                    Intent intent;
+                    if (useIntentService) {
+                        intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
+                        startTheService(intent);
                     } else if (useOreoService) {
                         intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
-                    } else if (useIntentService) {
-                        intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
+                        startTheService(intent);
+                    } else if (useBoundService) {
+                        intent = new Intent(MainActivity.this, ServiceDemoBound.class);
+                        bindService(intent,serviceConnection, Context.BIND_AUTO_CREATE);
                     } else if(useService){
                         intent = new Intent(MainActivity.this, ServiceDemo.class);
+                        startTheService(intent);
                     }else {
                         if (mediaPlayer == null) {
                             mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.music);
@@ -178,15 +206,19 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     //Start as ForegroundService if Android O or greater.
-                    if(intent != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(intent);
-                        } else {
-                            startService(intent);
-                        }
-                    }
+
             }
         });
+    }
+
+    private void startTheService(Intent intent){
+        if(intent != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent);
+            } else {
+                startService(intent);
+            }
+        }
     }
 
     private void stopMusic() {
@@ -199,15 +231,14 @@ public class MainActivity extends AppCompatActivity {
 
                     //Determine what to disable.
                     //Create new Intent depending on which switches are checked and send the Stop Signal.
-                    if (useIntentServiceLoop) {
-                        Intent intent = new Intent(MainActivity.this, ServiceDemoIntentWithLoop.class);
+                    if (useIntentService) {
+                        Intent intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
                         stopService(intent);
                     }else if (useOreoService) {
                         Intent intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
                         stopService(intent);
-                    }else if (useIntentService) {
-                        Intent intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
-                        stopService(intent);
+                    }else if (useBoundService) {
+                        unbindService(serviceConnection);
                     }else if(useService){
                         Intent intent = new Intent(MainActivity.this, ServiceDemo.class);
                         stopService(intent);
@@ -224,16 +255,16 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //Re-Enable the Switches.
-                if(!useService && !useOreoService && !useIntentService && !useIntentServiceLoop){
+                if(!useService && !useOreoService && !useBoundService && !useIntentService){
                     serviceSwitch.setEnabled(true);
                     serviceWithOreoSwitch.setEnabled(true);
+                    boundServiceSwitch.setEnabled(true);
                     intentServiceSwitch.setEnabled(true);
-                    intentServiceLoopSwitch.setEnabled(true);
                 }else {
                     serviceSwitch.setEnabled(useService);
                     serviceWithOreoSwitch.setEnabled(useOreoService);
+                    boundServiceSwitch.setEnabled(useBoundService);
                     intentServiceSwitch.setEnabled(useIntentService);
-                    intentServiceLoopSwitch.setEnabled(useIntentServiceLoop);
                 }
             }
         });

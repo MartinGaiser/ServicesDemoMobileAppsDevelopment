@@ -5,7 +5,7 @@
     <string name="startOreo">Start service Oreo Compatible</string>
     <string name="useService">Use Service</string>
     <string name="useIntent">Use IntentService </string>
-    <string name="useIntentLoop">Use IntentService with Loop</string>
+    <string name="useBound">Use BoundService</string>
     <string name="NotificationChannelID">ServiceDemoChannel</string>
     <string name="NotificationChannelName">"ServiceDemoChannel"</string>
     <string name="NotificationTextContent">dududududududududududududududududududududududududu</string>
