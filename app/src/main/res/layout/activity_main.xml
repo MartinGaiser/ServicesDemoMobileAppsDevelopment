@@ -36,56 +36,45 @@
 
     <Switch
         android:id="@+id/startOreoService"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="116dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="173dp"
+        android:layout_height="27dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginTop="36dp"
         android:checked="false"
-        android:text="@string/startOreo"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/useOreo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.237" />
+        app:layout_constraintTop_toBottomOf="@+id/useService" />
 
     <Switch
         android:id="@+id/useIntent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="116dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginTop="36dp"
         android:checked="false"
         android:text="@string/useIntent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.491" />
+        app:layout_constraintTop_toBottomOf="@+id/useBound" />
 
     <Switch
         android:id="@+id/useService"
-        android:layout_width="wrap_content"
+        android:layout_width="293dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="116dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginTop="60dp"
         android:checked="false"
-        android:text="UseService"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/useService"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.094" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
         android:id="@+id/useBound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="116dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginTop="36dp"
         android:text="@string/useBound"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.361" />
+        app:layout_constraintTop_toBottomOf="@+id/startOreoService" />
 
 </android.support.constraint.ConstraintLayout>

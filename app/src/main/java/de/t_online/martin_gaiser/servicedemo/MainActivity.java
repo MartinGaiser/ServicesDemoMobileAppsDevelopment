@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             boundService = ((ServiceDemoBound.ServiceBinder) iBinder).getService();
-            Toast.makeText(MainActivity.this,boundService.callTheService(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, boundService.callTheService(), Toast.LENGTH_SHORT).show();
         }
 
         //Stuff to do when the Service disconnects
@@ -177,47 +177,45 @@ public class MainActivity extends AppCompatActivity {
 
                 //Determine what Service to use... or no Service at all.
 
-                    //Create new MediaPlayer and start it.
+                //Create new MediaPlayer and start it.
 
 
-                    //Create new Intent depending on which switches are checked.
-                    Intent intent;
-                    if (useIntentService) {
-                        intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
-                        startTheService(intent);
-                    } else if (useOreoService) {
-                        intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
-                        startTheService(intent);
-                    } else if (useBoundService) {
-                        intent = new Intent(MainActivity.this, ServiceDemoBound.class);
-                        bindService(intent,serviceConnection, Context.BIND_AUTO_CREATE);
-                    } else if(useService){
-                        intent = new Intent(MainActivity.this, ServiceDemo.class);
-                        startTheService(intent);
-                    }else {
-                        if (mediaPlayer == null) {
-                            mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.music);
-                            mediaPlayer.setLooping(true);
-                            mediaPlayer.setVolume(0.5f, 0.5f);
-                        }
-                        mediaPlayer.start();
-                        //Show Toast depending of the start Method.
-                        Toast.makeText(MainActivity.this,"MediaPlayer started!", Toast.LENGTH_SHORT).show();
+                //Create new Intent depending on which switches are checked.
+                Intent intent;
+                if (useIntentService) {
+                    intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
+                    startTheService(intent);
+                } else if (useOreoService) {
+                    intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
+                    startTheService(intent);
+                } else if (useBoundService) {
+                    intent = new Intent(MainActivity.this, ServiceDemoBound.class);
+                    bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+                } else if (useService) {
+                    intent = new Intent(MainActivity.this, ServiceDemo.class);
+                    startTheService(intent);
+                } else {
+                    if (mediaPlayer == null) {
+                        mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.music);
+                        mediaPlayer.setLooping(true);
+                        mediaPlayer.setVolume(0.5f, 0.5f);
                     }
+                    mediaPlayer.start();
+                    //Show Toast depending of the start Method.
+                    Toast.makeText(MainActivity.this, "MediaPlayer started!", Toast.LENGTH_SHORT).show();
+                }
 
-                    //Start as ForegroundService if Android O or greater.
+                //Start as ForegroundService if Android O or greater.
 
             }
         });
     }
 
-    private void startTheService(Intent intent){
-        if(intent != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent);
-            } else {
-                startService(intent);
-            }
+    private void startTheService(Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
         }
     }
 
@@ -229,38 +227,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                    //Determine what to disable.
-                    //Create new Intent depending on which switches are checked and send the Stop Signal.
-                    if (useIntentService) {
-                        Intent intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
-                        stopService(intent);
-                    }else if (useOreoService) {
-                        Intent intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
-                        stopService(intent);
-                    }else if (useBoundService) {
-                        unbindService(serviceConnection);
-                    }else if(useService){
-                        Intent intent = new Intent(MainActivity.this, ServiceDemo.class);
-                        stopService(intent);
-                    }else{
+                //Determine what to disable.
+                //Create new Intent depending on which switches are checked and send the Stop Signal.
+                if (useIntentService) {
+                    Intent intent = new Intent(MainActivity.this, ServiceDemoIntent.class);
+                    stopService(intent);
+                } else if (useOreoService) {
+                    Intent intent = new Intent(MainActivity.this, ServiceDemoOreo.class);
+                    stopService(intent);
+                } else if (useBoundService) {
+                    unbindService(serviceConnection);
+                } else if (useService) {
+                    Intent intent = new Intent(MainActivity.this, ServiceDemo.class);
+                    stopService(intent);
+                } else {
 
-                        //Stop and release the MediaPlayer if one was running.
-                        if (mediaPlayer != null) {
-                            mediaPlayer.stop();
-                            mediaPlayer.release();
-                            mediaPlayer = null;
-                        }
-                        Toast.makeText(MainActivity.this, "MediaPlayer Stopped",Toast.LENGTH_SHORT).show();
+                    //Stop and release the MediaPlayer if one was running.
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
                     }
+                    Toast.makeText(MainActivity.this, "MediaPlayer Stopped", Toast.LENGTH_SHORT).show();
+                }
 
 
                 //Re-Enable the Switches.
-                if(!useService && !useOreoService && !useBoundService && !useIntentService){
+                if (!useService && !useOreoService && !useBoundService && !useIntentService) {
                     serviceSwitch.setEnabled(true);
                     serviceWithOreoSwitch.setEnabled(true);
                     boundServiceSwitch.setEnabled(true);
                     intentServiceSwitch.setEnabled(true);
-                }else {
+                } else {
                     serviceSwitch.setEnabled(useService);
                     serviceWithOreoSwitch.setEnabled(useOreoService);
                     boundServiceSwitch.setEnabled(useBoundService);

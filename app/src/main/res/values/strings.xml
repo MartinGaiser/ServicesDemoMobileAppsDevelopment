@@ -2,8 +2,9 @@
     <string name="app_name">ServiceDemo</string>
     <string name="startMusic">Start Music</string>
     <string name="stopMusic">Stop Music</string>
-    <string name="startOreo">Start service Oreo Compatible</string>
-    <string name="useService">Use Service</string>
+    <string name="useOreo">Use Started-Service</string>
+    <string name="useService">Use Started-Service
+        Oreo Incompatible</string>
     <string name="useIntent">Use IntentService </string>
     <string name="useBound">Use BoundService</string>
     <string name="NotificationChannelID">ServiceDemoChannel</string>
